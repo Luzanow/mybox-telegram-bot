@@ -40,7 +40,7 @@ async def send_locations(message: types.Message):
 
 @dp.message_handler(lambda msg: msg.text == "📞 Зв'язатися з нами")
 async def contact(message: types.Message):
-    await message.answer("📞 Телефон: +38 095 93 87 317
+    await message.answer("📞 Телефон: +38 095 93 87 317")
 📧 Email: myboxua55@gmail.com")
 
 @dp.message_handler(lambda msg: msg.text == "📦 Орендувати контейнер")
