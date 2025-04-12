@@ -13,7 +13,8 @@ dp = Dispatcher(bot)
 async def send_welcome(message: types.Message):
     keyboard = types.ReplyKeyboardMarkup(resize_keyboard=True)
     keyboard.add("📦 Орендувати контейнер", "📍 Локації", "📞 Зв'язатися з нами")
-    await message.answer("👋 Вітаємо у MyBox!
+    await message.answer("👋 Вітаємо у MyBox!")
+    
 Оберіть опцію нижче:", reply_markup=keyboard)
 
 # Локації
