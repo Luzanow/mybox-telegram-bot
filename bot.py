@@ -23,85 +23,97 @@ async def view_locations(message: types.Message):
     keyboard = types.InlineKeyboardMarkup(row_width=2)
 
     locations = [
-        ("📍 вул. Лугова 9", "https://maps.google.com/?q=50.425689,30.483118"),
-        ("📍 вул. Плодова 1", "https://maps.google.com/?q=50.400233,30.457452"),
-        ("📍 вул. Дегтярівська 21", "https://maps.google.com/?q=50.457832,30.480274"),
-        ("📍 вул. Сім'ї Сосніних 3", "https://maps.google.com/?q=50.434291,30.464987"),
-        ("📍 пр-т Лобановського 119", "https://maps.google.com/?q=50.426594,30.495850"),
-        ("📍 вул. Сортувальна 5", "https://maps.google.com/?q=50.464835,30.490526"),
-        ("📍 вул. Пухівська 4А", "https://maps.google.com/?q=50.422968,30.510332"),
-        ("📍 вул. Новокостянтинівська 18", "https://maps.google.com/?q=50.438151,30.497368"),
-        ("📍 вул. Бальзака 85А", "https://maps.google.com/?q=50.395106,30.455319"),
-        ("📍 вул. Будіндустрії 5", "https://maps.google.com/?q=50.476872,30.464531"),
-        ("📍 вул. Бориспільська 9", "https://maps.google.com/?q=50.446179,30.476200"),
-        ("📍 вул. Віскозна 1", "https://maps.google.com/?q=50.453824,30.487111"),
-        ("📍 вул. Промислова 4", "https://maps.google.com/?q=50.425598,30.508532")
+        ("📍 вул. Лугова 9", "https://maps.google.com/?q=50.425689,30.483118", "1850 грн"),
+        ("📍 вул. Плодова 1", "https://maps.google.com/?q=50.400233,30.457452", "1800 грн"),
+        ("📍 вул. Дегтярівська 21", "https://maps.google.com/?q=50.457832,30.480274", "1900 грн"),
+        ("📍 вул. Сім'ї Сосніних 3", "https://maps.google.com/?q=50.434291,30.464987", "1700 грн"),
+        ("📍 пр-т Лобановського 119", "https://maps.google.com/?q=50.426594,30.495850", "2000 грн"),
+        ("📍 вул. Сортувальна 5", "https://maps.google.com/?q=50.464835,30.490526", "2100 грн"),
+        ("📍 вул. Пухівська 4А", "https://maps.google.com/?q=50.422968,30.510332", "2200 грн"),
+        ("📍 вул. Новокостянтинівська 18", "https://maps.google.com/?q=50.438151,30.497368", "2100 грн"),
+        ("📍 вул. Бальзака 85А", "https://maps.google.com/?q=50.395106,30.455319", "2000 грн"),
+        ("📍 вул. Будіндустрії 5", "https://maps.google.com/?q=50.476872,30.464531", "1900 грн"),
+        ("📍 вул. Бориспільська 9", "https://maps.google.com/?q=50.446179,30.476200", "1850 грн"),
+        ("📍 вул. Віскозна 1", "https://maps.google.com/?q=50.453824,30.487111", "1750 грн"),
+        ("📍 вул. Промислова 4", "https://maps.google.com/?q=50.425598,30.508532", "1800 грн")
     ]
 
-    for loc, link in locations:
-        keyboard.add(types.InlineKeyboardButton(text=loc, url=link))
+    for loc, link, price in locations:
+        keyboard.add(types.InlineKeyboardButton(text=f"{loc} - {price}", url=link))
 
     await message.answer("Оберіть локацію для перегляду на карті:", reply_markup=keyboard)
 
 # Оренда контейнера
 @dp.message_handler(lambda message: message.text == "📦 Орендувати контейнер")
-async def rent(message: types.Message):
-    keyboard = types.ReplyKeyboardMarkup(resize_keyboard=True, one_time_keyboard=True)
+async def rent_container(message: types.Message):
+    keyboard = types.ReplyKeyboardMarkup(resize_keyboard=True)
+    keyboard.add("📍 Перегляд локацій", "📞 Зв'язатися з нами")
+
+    await message.answer("Оберіть локацію для оренди контейнера:", reply_markup=keyboard)
+    user_data[message.from_user.id] = {'state': 'select_location'}
+
+# Локація вибрана
+@dp.message_handler(lambda message: message.text in ["📍 вул. Лугова 9", "📍 вул. Плодова 1", "📍 вул. Дегтярівська 21", 
+                                                   "📍 вул. Сім'ї Сосніних 3", "📍 пр-т Лобановського 119", 
+                                                   "📍 вул. Сортувальна 5", "📍 вул. Пухівська 4А", 
+                                                   "📍 вул. Новокостянтинівська 18", "📍 вул. Бальзака 85А", 
+                                                   "📍 вул. Будіндустрії 5", "📍 вул. Бориспільська 9", 
+                                                   "📍 вул. Віскозна 1", "📍 вул. Промислова 4"])
+async def location_chosen(message: types.Message):
+    keyboard = types.ReplyKeyboardMarkup(resize_keyboard=True)
     keyboard.add("5 футів", "7.5 футів", "15 футів", "30 футів")
-    await message.answer("Оберіть розмір контейнера:", reply_markup=keyboard)
+    
+    await message.answer(f"Ви вибрали локацію: {message.text}. Оберіть розмір контейнера:", reply_markup=keyboard)
+    user_data[message.from_user.id]['location'] = message.text
+    user_data[message.from_user.id]['state'] = 'select_size'
 
+# Вибір розміру контейнера
 @dp.message_handler(lambda message: message.text in ["5 футів", "7.5 футів", "15 футів", "30 футів"])
-async def select_location(message: types.Message):
-    user_data[message.from_user.id] = {"size": message.text}
-    keyboard = types.ReplyKeyboardMarkup(resize_keyboard=True, one_time_keyboard=True)
-    keyboard.add("📍 вул. Лугова 9", "📍 вул. Плодова 1", "📍 вул. Дегтярівська 21", "📍 вул. Сім'ї Сосніних 3", "📍 пр-т Лобановського 119")
-    keyboard.add("📍 вул. Сортувальна 5", "📍 вул. Пухівська 4А", "📍 вул. Новокостянтинівська 18", "📍 вул. Бальзака 85А", "📍 вул. Будіндустрії 5")
-    keyboard.add("📍 вул. Бориспільська 9", "📍 вул. Віскозна 1", "📍 вул. Промислова 4")
-    await message.answer("Оберіть локацію:", reply_markup=keyboard)
-
-# Вибір локації
-@dp.message_handler(lambda message: message.text.startswith("📍"))
-async def select_duration(message: types.Message):
-    user_data[message.from_user.id]["location"] = message.text
-    keyboard = types.ReplyKeyboardMarkup(resize_keyboard=True, one_time_keyboard=True)
+async def select_container_size(message: types.Message):
+    user_data[message.from_user.id]['size'] = message.text
+    keyboard = types.ReplyKeyboardMarkup(resize_keyboard=True)
     keyboard.add("1 місяць", "3 місяці", "6 місяців", "12 місяців")
+
     await message.answer("Оберіть термін оренди (в місяцях):", reply_markup=keyboard)
+    user_data[message.from_user.id]['state'] = 'select_term'
 
 # Вибір терміну оренди
-@dp.message_handler(lambda message: message.text.isdigit())
-async def get_name(message: types.Message):
-    user_data[message.from_user.id]["months"] = int(message.text)
+@dp.message_handler(lambda message: message.text in ["1 місяць", "3 місяці", "6 місяців", "12 місяців"])
+async def select_rent_term(message: types.Message):
+    user_data[message.from_user.id]['term'] = message.text
     await message.answer("Введіть ваше ім'я:")
+    user_data[message.from_user.id]['state'] = 'enter_name'
 
-@dp.message_handler(lambda message: message.text.isalpha())
-async def get_phone(message: types.Message):
-    user_data[message.from_user.id]["name"] = message.text
-    await message.answer("Введіть ваш номер телефону:")
+# Введення імені
+@dp.message_handler(state='enter_name')
+async def enter_name(message: types.Message):
+    user_data[message.from_user.id]['name'] = message.text
+    await message.answer("Поділіться номером або введіть вручну:")
+    user_data[message.from_user.id]['state'] = 'enter_phone'
 
-@dp.message_handler(lambda message: "+" in message.text or message.text.isdigit())
-async def finish(message: types.Message):
-    uid = message.from_user.id
-    user_data[uid]["phone"] = message.text
-    size = user_data[uid]["size"]
-    months = user_data[uid]["months"]
-    name = user_data[uid]["name"]
-    phone = user_data[uid]["phone"]
-    location = user_data[uid]["location"]
+# Введення номеру телефону
+@dp.message_handler(state='enter_phone', content_types=[types.ContentType.CONTACT, types.ContentType.TEXT])
+async def enter_phone(message: types.Message):
+    phone_number = message.text if message.contact is None else message.contact.phone_number
+    user_data[message.from_user.id]['phone'] = phone_number
 
-    prices = {
-        "5 футів": 1850,
-        "7.5 футів": 2350,
-        "15 футів": 3800,
-        "30 футів": 6650
-    }
+    location = user_data[message.from_user.id]['location']
+    size = user_data[message.from_user.id]['size']
+    term = user_data[message.from_user.id]['term']
+    name = user_data[message.from_user.id]['name']
 
-    price = prices[size] * months
-    total = price  # без знижки
+    # Формуємо заявку
+    text = f"Заявка на оренду контейнера:\n" \
+           f"Ім'я: {name}\n" \
+           f"Телефон: {phone_number}\n" \
+           f"Локація: {location}\n" \
+           f"Розмір контейнера: {size}\n" \
+           f"Термін оренди: {term}"
 
-    text = f"✅ Нова заявка:\n👤 Ім'я: {name}\n📞 Телефон: {phone}\n📦 Контейнер: {size}\n📍 Локація: {location}\n📅 Місяців: {months}\n💰 Сума: {total} грн"
-
-    await bot.send_message(chat_id=ADMIN_CHAT_ID, text=text)
-    await message.answer("✅ Дякуємо! Ваша заявка відправлена.")
+    await bot.send_message(ADMIN_CHAT_ID, text)
+    await message.answer("Дякуємо! Ваша заявка відправлена.")
+    await message.answer("Оберіть опцію нижче:", reply_markup=types.ReplyKeyboardMarkup(
+        resize_keyboard=True, keyboard=[["📦 Орендувати контейнер", "📍 Перегляд локацій"]]))
 
 if __name__ == '__main__':
     executor.start_polling(dp, skip_updates=True)
