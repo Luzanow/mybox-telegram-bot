@@ -1,7 +1,7 @@
 import logging
 from aiogram import Bot, Dispatcher, executor, types
 
-API_TOKEN = '7680848123:AAHmbEGQ49ZB8SXTGof4l3mbZ9vcIbuV_6k'
+API_TOKEN = "1234567890:ABCdefGhIjklMnOpQRstuVwXyZ123456789"
 ADMIN_CHAT_ID = 'YOUR_TELEGRAM_ID'  # Заміни на свій Telegram ID
 
 logging.basicConfig(level=logging.INFO)
