@@ -20,26 +20,24 @@ async def send_welcome(message: types.Message):
 # Перегляд локацій
 @dp.message_handler(lambda message: message.text == "📍 Перегляд локацій")
 async def view_locations(message: types.Message):
-    keyboard = types.InlineKeyboardMarkup(row_width=2)
-
+    keyboard = types.InlineKeyboardMarkup(row_width=1)
     locations = [
-        ("📍 вул. Лугова 9", "https://maps.google.com/?q=50.425689,30.483118", "1850 грн"),
-        ("📍 вул. Плодова 1", "https://maps.google.com/?q=50.400233,30.457452", "1800 грн"),
-        ("📍 вул. Дегтярівська 21", "https://maps.google.com/?q=50.457832,30.480274", "1900 грн"),
-        ("📍 вул. Сім'ї Сосніних 3", "https://maps.google.com/?q=50.434291,30.464987", "1700 грн"),
-        ("📍 пр-т Лобановського 119", "https://maps.google.com/?q=50.426594,30.495850", "2000 грн"),
-        ("📍 вул. Сортувальна 5", "https://maps.google.com/?q=50.464835,30.490526", "2100 грн"),
-        ("📍 вул. Пухівська 4А", "https://maps.google.com/?q=50.422968,30.510332", "2200 грн"),
-        ("📍 вул. Новокостянтинівська 18", "https://maps.google.com/?q=50.438151,30.497368", "2100 грн"),
-        ("📍 вул. Бальзака 85А", "https://maps.google.com/?q=50.395106,30.455319", "2000 грн"),
-        ("📍 вул. Будіндустрії 5", "https://maps.google.com/?q=50.476872,30.464531", "1900 грн"),
-        ("📍 вул. Бориспільська 9", "https://maps.google.com/?q=50.446179,30.476200", "1850 грн"),
-        ("📍 вул. Віскозна 1", "https://maps.google.com/?q=50.453824,30.487111", "1750 грн"),
-        ("📍 вул. Промислова 4", "https://maps.google.com/?q=50.425598,30.508532", "1800 грн")
+        ("📍 вул. Лугова 9", "https://maps.google.com/?q=50.425689,30.483118"),
+        ("📍 вул. Плодова 1", "https://maps.google.com/?q=50.400233,30.457452"),
+        ("📍 вул. Дегтярівська 21", "https://maps.google.com/?q=50.457832,30.480274"),
+        ("📍 вул. Сім'ї Сосніних 3", "https://maps.google.com/?q=50.434291,30.464987"),
+        ("📍 пр-т Лобановського 119", "https://maps.google.com/?q=50.426594,30.495850"),
+        ("📍 вул. Сортувальна 5", "https://maps.google.com/?q=50.464835,30.490526"),
+        ("📍 вул. Пухівська 4А", "https://maps.google.com/?q=50.422968,30.510332"),
+        ("📍 вул. Новокостянтинівська 18", "https://maps.google.com/?q=50.438151,30.497368"),
+        ("📍 вул. Бальзака 85А", "https://maps.google.com/?q=50.395106,30.455319"),
+        ("📍 вул. Будіндустрії 5", "https://maps.google.com/?q=50.476872,30.464531"),
+        ("📍 вул. Бориспільська 9", "https://maps.google.com/?q=50.446179,30.476200"),
+        ("📍 вул. Віскозна 1", "https://maps.google.com/?q=50.453824,30.487111"),
+        ("📍 вул. Промислова 4", "https://maps.google.com/?q=50.425598,30.508532")
     ]
-
-    for loc, link, price in locations:
-        keyboard.add(types.InlineKeyboardButton(text=f"{loc} - {price}", url=link))
+    for loc, link in locations:
+        keyboard.add(types.InlineKeyboardButton(text=loc, url=link))
 
     await message.answer("Оберіть локацію для перегляду на карті:", reply_markup=keyboard)
 
@@ -48,7 +46,7 @@ async def view_locations(message: types.Message):
 async def rent_container(message: types.Message):
     keyboard = types.ReplyKeyboardMarkup(resize_keyboard=True)
     keyboard.add("📍 Перегляд локацій", "📞 Зв'язатися з нами")
-
+    
     await message.answer("Оберіть локацію для оренди контейнера:", reply_markup=keyboard)
     user_data[message.from_user.id] = {'state': 'select_location'}
 
