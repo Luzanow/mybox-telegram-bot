@@ -1,7 +1,7 @@
 import logging
 from aiogram import Bot, Dispatcher, executor, types
 
-API_TOKEN = "1234567890:ABCdefGhIjklMnOpQRstuVwXyZ123456789"
+API_TOKEN = "7680848123:AAHmbEGQ49ZB8SXTGof4l3mbZ9vcIbuV_6k"
 ADMIN_CHAT_ID = 'YOUR_TELEGRAM_ID'  # Заміни на свій Telegram ID
 
 logging.basicConfig(level=logging.INFO)
@@ -13,7 +13,7 @@ dp = Dispatcher(bot)
 async def send_welcome(message: types.Message):
     keyboard = types.ReplyKeyboardMarkup(resize_keyboard=True)
     keyboard.add("📦 Орендувати контейнер", "📍 Локації", "📞 Зв'язатися з нами")
-    await message.answer("👋 Вітаємо у MyBox!")
+    await message.answer("🖐 Вітаємо у MyBox!")
     
 await message.answer("Обeрiть опцiю нижче:")
 
