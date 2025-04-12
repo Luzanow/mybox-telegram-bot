@@ -52,7 +52,7 @@ async def rent(message: types.Message):
 
 @dp.message_handler(lambda message: message.text in ["5 футів - 1850 грн", "7.5 футів - 2350 грн", "15 футів - 3800 грн", "30 футів - 6650 грн"])
 async def select_location(message: types.Message):
-    user_data[message.from_user.id] = {"size": message.text}
+    user_data[message.from_user.id] = {"size": message.text.split(" ")[0]}  # Зберігаємо розмір контейнера
     keyboard = types.ReplyKeyboardMarkup(resize_keyboard=True, one_time_keyboard=True)
     keyboard.add("📍 вул. Лугова 9", "📍 вул. Плодова 1", "📍 вул. Дегтярівська 21", "📍 вул. Сім'ї Сосніних 3", "📍 пр-т Лобановського 119")
     keyboard.add("📍 вул. Сортувальна 5", "📍 вул. Пухівська 4А", "📍 вул. Новокостянтинівська 18", "📍 вул. Бальзака 85А", "📍 вул. Будіндустрії 5")
@@ -64,16 +64,13 @@ async def select_location(message: types.Message):
 async def select_duration(message: types.Message):
     user_data[message.from_user.id]["location"] = message.text
     keyboard = types.ReplyKeyboardMarkup(resize_keyboard=True, one_time_keyboard=True)
-    
-    # Кнопки для вибору терміну оренди
-    months_buttons = [f"{i}" for i in range(1, 13)]  # Від 1 до 12 місяців
-    keyboard.add(*months_buttons)
+    keyboard.add("1 місяць", "2 місяці", "3 місяці", "4 місяці", "5 місяців", "6 місяців", "7 місяців", "8 місяців", "9 місяців", "10 місяців", "11 місяців", "12 місяців")
     await message.answer("Оберіть термін оренди (в місяцях):", reply_markup=keyboard)
 
 # Вибір терміну оренди
 @dp.message_handler(lambda message: message.text.isdigit())
 async def get_name(message: types.Message):
-    user_data[message.from_user.id]["months"] = int(message.text)  # отримуємо кількість місяців
+    user_data[message.from_user.id]["months"] = int(message.text)
     await message.answer("Введіть ваше ім'я:")
 
 @dp.message_handler(lambda message: message.text.isalpha())
@@ -92,10 +89,10 @@ async def finish(message: types.Message):
     location = user_data[uid]["location"]
 
     prices = {
-        "5 футів - 1850 грн": 1850,
-        "7.5 футів - 2350 грн": 2350,
-        "15 футів - 3800 грн": 3800,
-        "30 футів - 6650 грн": 6650
+        "5 футів": 1850,
+        "7.5 футів": 2350,
+        "15 футів": 3800,
+        "30 футів": 6650
     }
 
     price = prices[size] * months
