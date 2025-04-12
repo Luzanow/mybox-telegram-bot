@@ -2,7 +2,7 @@ import logging
 from aiogram import Bot, Dispatcher, executor, types
 
 API_TOKEN = "7680848123:AAHqNizmx3hOXmjVOmzdnwQCenlXHTWX8OA"
-ADMIN_CHAT_ID = 5498505652
+ADMIN_CHAT_ID = 5498505652  # Ваш Telegram ID
 
 logging.basicConfig(level=logging.INFO)
 bot = Bot(token=API_TOKEN)
@@ -10,17 +10,18 @@ dp = Dispatcher(bot)
 
 user_data = {}
 
-# Старт
-main_keyboard = types.ReplyKeyboardMarkup(resize_keyboard=True, one_time_keyboard=True, row_width=2)
-main_keyboard.add(
-    "📦 Орендувати контейнер",
-    "📍 Локації",
-    "📞 Зв'язатися з нами"
-)
-
+# Стартова команда
 @dp.message_handler(commands=["start"])
 async def send_welcome(message: types.Message):
-    await message.answer("🖐 Вітаємо у MyBox!", reply_markup=main_keyboard)
+    keyboard = types.ReplyKeyboardMarkup(
+        resize_keyboard=True, one_time_keyboard=True, row_width=2
+    )
+    keyboard.add(
+        "📦 Орендувати контейнер",
+        "📍 Локації",
+        "📞 Зв'язатися з нами"
+    )
+    await message.answer("🖐 Вітаємо у MyBox!", reply_markup=keyboard)
     await message.answer("Оберіть опцію нижче:")
 
 # Локації
@@ -30,19 +31,33 @@ async def send_locations(message: types.Message):
     locations = [
         ("📍 вул. Лугова 9", "https://www.google.com/maps?q=вул.+Лугова+9,+Київ"),
         ("📍 вул. Плодова 1", "https://www.google.com/maps?q=вул.+Плодова+1,+Київ"),
-        ("📍 вул. Дегтярівська 21", "https://www.google.com/maps?q=вул.+Дегтярівська+21,+Київ")
+        ("📍 вул. Дегтярівська 21", "https://www.google.com/maps?q=вул.+Дегтярівська+21,+Київ"),
+        ("📍 вул. Сім'ї Сосніних 3", "https://www.google.com/maps?q=вул.+Сім'ї+Сосніних+3,+Київ"),
+        ("📍 пр-т Лобановського 119", "https://www.google.com/maps?q=просп.+Лобановського+119,+Київ"),
+        ("📍 вул. Сортувальна 5", "https://www.google.com/maps?q=вул.+Сортувальна+5,+Київ"),
+        ("📍 вул. Пухівська 4А", "https://www.google.com/maps?q=вул.+Пухівська+4А,+Київ"),
+        ("📍 вул. Новокостянтинівська 18", "https://www.google.com/maps?q=вул.+Новокостянтинівська+18,+Київ"),
+        ("📍 вул. Бальзака 85А", "https://www.google.com/maps?q=вул.+Бальзака+85А,+Київ"),
+        ("📍 вул. Будіндустрії 5", "https://www.google.com/maps?q=вул.+Будіндустрії+5,+Київ"),
+        ("📍 вул. Бориспільська 9", "https://www.google.com/maps?q=вул.+Бориспільська+9,+Київ"),
+        ("📍 вул. Віскозна 1", "https://www.google.com/maps?q=вул.+Віскозна+1,+Київ"),
+        ("📍 вул. Промислова 4", "https://www.google.com/maps?q=вул.+Промислова+4,+Київ"),
     ]
     for name, url in locations:
         keyboard.add(types.InlineKeyboardButton(text=name, url=url))
+    
     await message.answer("Оберіть локацію:", reply_markup=keyboard)
-    await message.answer("Повертаємо головне меню ⬇️", reply_markup=main_keyboard)
+    # Додаємо три кнопки на повернення
+    main_keyboard = types.ReplyKeyboardMarkup(resize_keyboard=True, one_time_keyboard=True, row_width=2)
+    main_keyboard.add("📦 Орендувати контейнер", "📞 Зв'язатися з нами")
+    await message.answer("Повернутись до головного меню ⬇️", reply_markup=main_keyboard)
 
-# Контакт
+# Зв'язок
 @dp.message_handler(lambda msg: msg.text == "📞 Зв'язатися з нами")
 async def contact_info(message: types.Message):
     await message.answer("📞 Телефон: +38 095 93 87 317\n📧 Email: myboxua55@gmail.com", reply_markup=main_keyboard)
 
-# Оренда
+# Оренда контейнера
 @dp.message_handler(lambda msg: msg.text == "📦 Орендувати контейнер")
 async def rent_container(message: types.Message):
     user_data[message.from_user.id] = {}
@@ -55,20 +70,22 @@ async def rent_container(message: types.Message):
     )
     await message.answer("Оберіть розмір контейнера:", reply_markup=keyboard)
 
+# Вибір терміну оренди
 @dp.message_handler(lambda msg: "футів" in msg.text and "грн" in msg.text)
 async def choose_months(message: types.Message):
-    size, price = message.text.split(" - ")
-    user_data[message.from_user.id]["size"] = size.strip()
-    user_data[message.from_user.id]["base_price"] = int(price.replace("грн", "").strip())
+    size = message.text.split(" - ")[0]
+    user_data[message.from_user.id]["size"] = size
     keyboard = types.ReplyKeyboardMarkup(resize_keyboard=True, one_time_keyboard=True, row_width=4)
     keyboard.add(*[str(i) for i in range(1, 13)])
     await message.answer("Оберіть термін оренди (в місяцях):", reply_markup=keyboard)
 
+# Введення імені
 @dp.message_handler(lambda msg: msg.text.isdigit() and 1 <= int(msg.text) <= 12)
 async def ask_name(message: types.Message):
     user_data[message.from_user.id]["months"] = int(message.text)
     await message.answer("Введіть ваше ім'я:")
 
+# Введення імені завершено; тепер введення номера
 @dp.message_handler(lambda msg: msg.text.isalpha())
 async def ask_phone(message: types.Message):
     user_data[message.from_user.id]["name"] = message.text
@@ -77,17 +94,20 @@ async def ask_phone(message: types.Message):
     keyboard.add(button)
     await message.answer("Поділіться номером або введіть вручну:", reply_markup=keyboard)
 
+# Отримання контакту (номер телефону)
 @dp.message_handler(content_types=types.ContentType.CONTACT)
-async def handle_contact(message: types.Message):
+async def receive_contact(message: types.Message):
     user_data[message.from_user.id]["phone"] = message.contact.phone_number
     await send_summary(message)
 
-@dp.message_handler(lambda msg: msg.text and ("+" in msg.text or msg.text.replace(" ", "").isdigit()))
+# Введення номера вручну
+@dp.message_handler(lambda msg: "+" in msg.text or msg.text.isdigit())
 async def handle_manual_phone(message: types.Message):
     user_data[message.from_user.id]["phone"] = message.text
     await send_summary(message)
 
-async def send_summary(message):
+# Підсумок заявки
+async def send_summary(message: types.Message):
     uid = message.from_user.id
     data = user_data[uid]
     size = data["size"]
@@ -95,7 +115,7 @@ async def send_summary(message):
     name = data["name"]
     phone = data["phone"]
     base_price = data["base_price"]
-    discount = 0.05 if months >= 9 else 0.03 if months >= 6 else 0.02 if months >= 3 else 0.0
+    discount = 0.05 if months >= 9 else 0.03 if months >= 6 else 0.02 if months >= 3 else 0
     total = int(base_price * months * (1 - discount))
     text = (
         "✅ Нова заявка:\n"
@@ -107,7 +127,7 @@ async def send_summary(message):
         f"💰 Сума зі знижкою: {total} грн"
     )
     await bot.send_message(chat_id=ADMIN_CHAT_ID, text=text)
-    await message.answer("✅ Заявку відправлено! Очікуйте дзвінка.", reply_markup=main_keyboard)
+    await message.answer("✅ Заявку відправлено! Очікуйте дзвінка оператора.", reply_markup=main_keyboard)
 
 if __name__ == "__main__":
     executor.start_polling(dp, skip_updates=True)
