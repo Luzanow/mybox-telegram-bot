@@ -66,14 +66,14 @@ async def select_duration(message: types.Message):
     keyboard = types.ReplyKeyboardMarkup(resize_keyboard=True, one_time_keyboard=True)
     
     # Кнопки для вибору терміну оренди
-    months_buttons = [f"{i} місяців" for i in range(1, 13)]  # Від 1 до 12 місяців
+    months_buttons = [f"{i}" for i in range(1, 13)]  # Від 1 до 12 місяців
     keyboard.add(*months_buttons)
     await message.answer("Оберіть термін оренди (в місяцях):", reply_markup=keyboard)
 
 # Вибір терміну оренди
-@dp.message_handler(lambda message: message.text.endswith("місяців"))
+@dp.message_handler(lambda message: message.text.isdigit())
 async def get_name(message: types.Message):
-    user_data[message.from_user.id]["months"] = int(message.text.split()[0])  # отримуємо кількість місяців
+    user_data[message.from_user.id]["months"] = int(message.text)  # отримуємо кількість місяців
     await message.answer("Введіть ваше ім'я:")
 
 @dp.message_handler(lambda message: message.text.isalpha())
