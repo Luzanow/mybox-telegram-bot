@@ -15,7 +15,8 @@ async def send_welcome(message: types.Message):
     keyboard.add("📦 Орендувати контейнер", "📍 Локації", "📞 Зв'язатися з нами")
     await message.answer("👋 Вітаємо у MyBox!")
     
-Оберіть опцію нижче:", reply_markup=keyboard)
+await message.answer("Обeрiть опцiю нижче:")
+
 
 # Локації
 @dp.message_handler(lambda message: message.text == "📍 Локації")
