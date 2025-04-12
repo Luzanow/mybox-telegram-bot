@@ -17,7 +17,7 @@ async def send_welcome(message: types.Message):
     keyboard.add("📦 Орендувати контейнер", "📍 Перегляд локацій", "📞 Зв'язатися з нами")
     await message.answer("🖐 Вітаємо у MyBox!\nОберіть опцію нижче:", reply_markup=keyboard)
 
-# Перегляд локацій
+# Перегляд локацій (без ціни)
 @dp.message_handler(lambda message: message.text == "📍 Перегляд локацій")
 async def view_locations(message: types.Message):
     keyboard = types.InlineKeyboardMarkup(row_width=2)
@@ -50,8 +50,9 @@ async def rent(message: types.Message):
     keyboard.add("5 футів", "7.5 футів", "15 футів", "30 футів")
     await message.answer("Оберіть розмір контейнера:", reply_markup=keyboard)
 
+# Вибір контейнера
 @dp.message_handler(lambda message: message.text in ["5 футів", "7.5 футів", "15 футів", "30 футів"])
-async def select_location(message: types.Message):
+async def select_container(message: types.Message):
     user_data[message.from_user.id] = {"size": message.text}
     keyboard = types.ReplyKeyboardMarkup(resize_keyboard=True, one_time_keyboard=True)
     keyboard.add("📍 вул. Лугова 9", "📍 вул. Плодова 1", "📍 вул. Дегтярівська 21", "📍 вул. Сім'ї Сосніних 3", "📍 пр-т Лобановського 119")
