@@ -1,6 +1,5 @@
 import logging
 from aiogram import Bot, Dispatcher, executor, types
-from aiogram.types import ParseMode
 
 API_TOKEN = "7680848123:AAHqNizmx3hOXmjVOmzdnwQCenlXHTWX8OA"  # Ваш токен
 ADMIN_CHAT_ID = '5498505652'  # Заміни на свій Telegram ID
@@ -49,11 +48,10 @@ async def view_locations(message: types.Message):
 async def rent(message: types.Message):
     keyboard = types.ReplyKeyboardMarkup(resize_keyboard=True, one_time_keyboard=True)
     keyboard.add("5 футів", "7.5 футів", "15 футів", "30 футів")
-    await message.answer("Оберіть розмір контейнера:\nВартість:\n- 5 футів: <b>1850 грн</b>\n- 7.5 футів: <b>2350 грн</b>\n- 15 футів: <b>3800 грн</b>\n- 30 футів: <b>6650 грн</b>", parse_mode=ParseMode.HTML, reply_markup=keyboard)
+    await message.answer("Оберіть розмір контейнера:", reply_markup=keyboard)
 
-# Вибір контейнера
 @dp.message_handler(lambda message: message.text in ["5 футів", "7.5 футів", "15 футів", "30 футів"])
-async def select_container(message: types.Message):
+async def select_location(message: types.Message):
     user_data[message.from_user.id] = {"size": message.text}
     keyboard = types.ReplyKeyboardMarkup(resize_keyboard=True, one_time_keyboard=True)
     keyboard.add("📍 вул. Лугова 9", "📍 вул. Плодова 1", "📍 вул. Дегтярівська 21", "📍 вул. Сім'ї Сосніних 3", "📍 пр-т Лобановського 119")
@@ -66,8 +64,7 @@ async def select_container(message: types.Message):
 async def select_duration(message: types.Message):
     user_data[message.from_user.id]["location"] = message.text
     keyboard = types.ReplyKeyboardMarkup(resize_keyboard=True, one_time_keyboard=True)
-    # Кнопки від 1 до 12 місяців
-    keyboard.add(*[str(i) for i in range(1, 13)])
+    keyboard.add("1 місяць", "3 місяці", "6 місяців", "12 місяців")
     await message.answer("Оберіть термін оренди (в місяцях):", reply_markup=keyboard)
 
 # Вибір терміну оренди
