@@ -32,7 +32,7 @@ async def send_locations(message: types.Message):
 async def contact(message: types.Message):
     await message.answer("📞 Телефон: +38 095 93 87 317")
 
-📧 Email: myboxua55@gmail.com")
+await message.answer("📧 Email: myboxua55@gmail.com")
 
 # Оренда
 user_data = {}
