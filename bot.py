@@ -47,10 +47,10 @@ async def view_locations(message: types.Message):
 @dp.message_handler(lambda message: message.text == "📦 Орендувати контейнер")
 async def rent(message: types.Message):
     keyboard = types.ReplyKeyboardMarkup(resize_keyboard=True, one_time_keyboard=True)
-    keyboard.add("5 футів", "7.5 футів", "15 футів", "30 футів")
-    await message.answer("Оберіть розмір контейнера:", reply_markup=keyboard)
+    keyboard.add("5 футів - 1850 грн", "7.5 футів - 2350 грн", "15 футів - 3800 грн", "30 футів - 6650 грн")
+    await message.answer("Оберіть розмір контейнера з ціною:", reply_markup=keyboard)
 
-@dp.message_handler(lambda message: message.text in ["5 футів", "7.5 футів", "15 футів", "30 футів"])
+@dp.message_handler(lambda message: message.text in ["5 футів - 1850 грн", "7.5 футів - 2350 грн", "15 футів - 3800 грн", "30 футів - 6650 грн"])
 async def select_location(message: types.Message):
     user_data[message.from_user.id] = {"size": message.text}
     keyboard = types.ReplyKeyboardMarkup(resize_keyboard=True, one_time_keyboard=True)
@@ -92,10 +92,10 @@ async def finish(message: types.Message):
     location = user_data[uid]["location"]
 
     prices = {
-        "5 футів": 1850,
-        "7.5 футів": 2350,
-        "15 футів": 3800,
-        "30 футів": 6650
+        "5 футів - 1850 грн": 1850,
+        "7.5 футів - 2350 грн": 2350,
+        "15 футів - 3800 грн": 3800,
+        "30 футів - 6650 грн": 6650
     }
 
     price = prices[size] * months
