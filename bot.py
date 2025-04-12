@@ -22,6 +22,8 @@ async def send_welcome(message: types.Message):
 # Локації
 @dp.message_handler(lambda msg: msg.text == "📍 Локації")
 async def send_locations(message: types.Message):
+   @dp.message_handler(lambda message: message.text == "📍 Локації")
+async def send_locations(message: types.Message):
     keyboard = types.InlineKeyboardMarkup(row_width=1)
     locations = [
         ("📍 вул. Лугова 9", "https://maps.app.goo.gl/RXYw27unXxyQUt3e8"),
@@ -37,8 +39,8 @@ async def send_locations(message: types.Message):
         ("📍 вул. Бориспільська 9", "https://maps.app.goo.gl/kx6ZBAzhqMkD9Rwv6"),
         ("📍 вул. Віскозна 1", "https://maps.app.goo.gl/ULPRNKU5cJZYHk5b9"),
         ("📍 вул. Промислова 4", "https://maps.app.goo.gl/HWYxwXktnsCwvxmh9"),
-    }
-    for name, url in locations.items():
+    ]
+    for name, url in locations:
         keyboard.add(types.InlineKeyboardButton(name, url=url))
     await message.answer("Оберіть локацію:", reply_markup=keyboard)
 
