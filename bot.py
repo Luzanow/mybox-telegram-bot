@@ -1,5 +1,6 @@
 import logging
 from aiogram import Bot, Dispatcher, executor, types
+from aiogram.types import ParseMode
 
 API_TOKEN = "7680848123:AAHqNizmx3hOXmjVOmzdnwQCenlXHTWX8OA"  # Ваш токен
 ADMIN_CHAT_ID = '5498505652'  # Заміни на свій Telegram ID
@@ -17,7 +18,7 @@ async def send_welcome(message: types.Message):
     keyboard.add("📦 Орендувати контейнер", "📍 Перегляд локацій", "📞 Зв'язатися з нами")
     await message.answer("🖐 Вітаємо у MyBox!\nОберіть опцію нижче:", reply_markup=keyboard)
 
-# Перегляд локацій (без ціни)
+# Перегляд локацій
 @dp.message_handler(lambda message: message.text == "📍 Перегляд локацій")
 async def view_locations(message: types.Message):
     keyboard = types.InlineKeyboardMarkup(row_width=2)
@@ -48,7 +49,7 @@ async def view_locations(message: types.Message):
 async def rent(message: types.Message):
     keyboard = types.ReplyKeyboardMarkup(resize_keyboard=True, one_time_keyboard=True)
     keyboard.add("5 футів", "7.5 футів", "15 футів", "30 футів")
-    await message.answer("Оберіть розмір контейнера:", reply_markup=keyboard)
+    await message.answer("Оберіть розмір контейнера:\nВартість:\n- 5 футів: <b>1850 грн</b>\n- 7.5 футів: <b>2350 грн</b>\n- 15 футів: <b>3800 грн</b>\n- 30 футів: <b>6650 грн</b>", parse_mode=ParseMode.HTML, reply_markup=keyboard)
 
 # Вибір контейнера
 @dp.message_handler(lambda message: message.text in ["5 футів", "7.5 футів", "15 футів", "30 футів"])
@@ -65,13 +66,14 @@ async def select_container(message: types.Message):
 async def select_duration(message: types.Message):
     user_data[message.from_user.id]["location"] = message.text
     keyboard = types.ReplyKeyboardMarkup(resize_keyboard=True, one_time_keyboard=True)
-    keyboard.add("1 місяць", "3 місяці", "6 місяців", "12 місяців")
+    # Кнопки від 1 до 12 місяців
+    keyboard.add(*[str(i) for i in range(1, 13)])
     await message.answer("Оберіть термін оренди (в місяцях):", reply_markup=keyboard)
 
 # Вибір терміну оренди
-@dp.message_handler(lambda message: message.text in ["1 місяць", "3 місяці", "6 місяців", "12 місяців"])
+@dp.message_handler(lambda message: message.text.isdigit())
 async def get_name(message: types.Message):
-    user_data[message.from_user.id]["months"] = message.text
+    user_data[message.from_user.id]["months"] = int(message.text)
     await message.answer("Введіть ваше ім'я:")
 
 @dp.message_handler(lambda message: message.text.isalpha())
@@ -99,13 +101,7 @@ async def finish(message: types.Message):
     price = prices[size] * months
     total = price  # без знижки
 
-    text = f"✅ Нова заявка:\n" \
-           f"Ім'я: {name}\n" \
-           f"Телефон: {phone}\n" \
-           f"Контейнер: {size}\n" \
-           f"Локація: {location}\n" \
-           f"Місяців: {months}\n" \
-           f"Сума: {total} грн"
+    text = f"✅ Нова заявка:\n👤 Ім'я: {name}\n📞 Телефон: {phone}\n📦 Контейнер: {size}\n📍 Локація: {location}\n📅 Місяців: {months}\n💰 Сума: {total} грн"
 
     await bot.send_message(chat_id=ADMIN_CHAT_ID, text=text)
     await message.answer("✅ Дякуємо! Ваша заявка відправлена.")
