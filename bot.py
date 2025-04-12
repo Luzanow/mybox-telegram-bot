@@ -1,7 +1,7 @@
 import logging
 from aiogram import Bot, Dispatcher, executor, types
 
-API_TOKEN = "7680848123:AAHqNizmx3hOXmjVOmzdnwQCenlXHTWX8OA"
+API_TOKEN = "7680848123:AAHmbEGQ49ZB8SXTGof4l3mbZ9vcIbuV_6k"
 ADMIN_CHAT_ID = 5498505652  # Ваш Telegram ID
 
 logging.basicConfig(level=logging.INFO)
@@ -52,15 +52,33 @@ async def send_locations(message: types.Message):
     main_keyboard.add("📦 Орендувати контейнер", "📞 Зв'язатися з нами")
     await message.answer("Повернутись до головного меню ⬇️", reply_markup=main_keyboard)
 
-# Зв'язок
-@dp.message_handler(lambda msg: msg.text == "📞 Зв'язатися з нами")
-async def contact_info(message: types.Message):
-    await message.answer("📞 Телефон: +38 095 93 87 317\n📧 Email: myboxua55@gmail.com", reply_markup=main_keyboard)
-
 # Оренда контейнера
 @dp.message_handler(lambda msg: msg.text == "📦 Орендувати контейнер")
 async def rent_container(message: types.Message):
-    user_data[message.from_user.id] = {}
+    user_data[message.from_user.id] = {"location": None}  # Зберігаємо пусту локацію
+    # Вибір локації
+    keyboard = types.ReplyKeyboardMarkup(resize_keyboard=True, one_time_keyboard=True, row_width=2)
+    keyboard.add(
+        "📍 вул. Лугова 9",
+        "📍 вул. Плодова 1",
+        "📍 вул. Дегтярівська 21",
+        "📍 вул. Сім'ї Сосніних 3",
+        "📍 пр-т Лобановського 119"
+        "📍 вул. Сортувальна 5"
+        "📍 вул. Пухівська 4А"
+        "📍 вул. Новокостянтинівська 18"
+        "📍 вул. Бальзака 85А"
+        "📍 вул. Будіндустрії 5"
+        "📍 вул. Бориспільська 9"
+        "📍 вул. Віскозна 1"
+        "📍 вул. Промислова 4"
+    )
+    await message.answer("Оберіть локацію:", reply_markup=keyboard)
+
+# Локація вибрана
+@dp.message_handler(lambda msg: msg.text.startswith("📍"))
+async def location_chosen(message: types.Message):
+    user_data[message.from_user.id]["location"] = message.text
     keyboard = types.ReplyKeyboardMarkup(resize_keyboard=True, one_time_keyboard=True, row_width=2)
     keyboard.add(
         "5 футів - 1850 грн",
@@ -70,7 +88,7 @@ async def rent_container(message: types.Message):
     )
     await message.answer("Оберіть розмір контейнера:", reply_markup=keyboard)
 
-# Вибір терміну оренди
+# Вибір розміру контейнера
 @dp.message_handler(lambda msg: "футів" in msg.text and "грн" in msg.text)
 async def choose_months(message: types.Message):
     size = message.text.split(" - ")[0]
@@ -79,7 +97,7 @@ async def choose_months(message: types.Message):
     keyboard.add(*[str(i) for i in range(1, 13)])
     await message.answer("Оберіть термін оренди (в місяцях):", reply_markup=keyboard)
 
-# Введення імені
+# Введення терміну оренди
 @dp.message_handler(lambda msg: msg.text.isdigit() and 1 <= int(msg.text) <= 12)
 async def ask_name(message: types.Message):
     user_data[message.from_user.id]["months"] = int(message.text)
@@ -114,17 +132,17 @@ async def send_summary(message: types.Message):
     months = data["months"]
     name = data["name"]
     phone = data["phone"]
+    location = data["location"]  # Локація користувача
     base_price = data["base_price"]
-    discount = 0.05 if months >= 9 else 0.03 if months >= 6 else 0.02 if months >= 3 else 0
-    total = int(base_price * months * (1 - discount))
+    total = int(base_price * months)  # Вираховуємо без знижки, якщо потрібно - додамо знижку
     text = (
         "✅ Нова заявка:\n"
         f"👤 Ім'я: {name}\n"
         f"📞 Телефон: {phone}\n"
         f"📦 Контейнер: {size}\n"
         f"📅 Місяців: {months}\n"
-        f"💸 Знижка: {int(discount * 100)}%\n"
-        f"💰 Сума зі знижкою: {total} грн"
+        f"📍 Локація: {location}\n"
+        f"💰 Сума: {total} грн"
     )
     await bot.send_message(chat_id=ADMIN_CHAT_ID, text=text)
     await message.answer("✅ Заявку відправлено! Очікуйте дзвінка оператора.", reply_markup=main_keyboard)
