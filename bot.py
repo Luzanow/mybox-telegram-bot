@@ -20,9 +20,8 @@ async def send_welcome(message: types.Message):
     await message.answer("Оберіть опцію нижче:", reply_markup=keyboard)
 
 # Локації
+# Локації
 @dp.message_handler(lambda msg: msg.text == "📍 Локації")
-async def send_locations(message: types.Message):
-   @dp.message_handler(lambda message: message.text == "📍 Локації")
 async def send_locations(message: types.Message):
     keyboard = types.InlineKeyboardMarkup(row_width=1)
     locations = [
@@ -43,7 +42,6 @@ async def send_locations(message: types.Message):
     for name, url in locations:
         keyboard.add(types.InlineKeyboardButton(name, url=url))
     await message.answer("Оберіть локацію:", reply_markup=keyboard)
-
 # Контакт
 @dp.message_handler(lambda msg: msg.text == "📞 Зв'язатися з нами")
 async def contact(message: types.Message):
