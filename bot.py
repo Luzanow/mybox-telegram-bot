@@ -17,8 +17,8 @@ async def send_welcome(message: types.Message):
     keyboard.add("📦 Орендувати контейнер", "📍 Перегляд локацій", "📞 Зв'язатися з нами")
     await message.answer("🖐 Вітаємо у MyBox!\nОберіть опцію нижче:", reply_markup=keyboard)
 
-
-@dp.message_handler
+# Перегляд локацій
+@dp.message_handler(lambda message: message.text == "📍 Перегляд локацій")
 async def view_locations(message: types.Message):
     keyboard = types.InlineKeyboardMarkup(row_width=2)
 
@@ -63,8 +63,11 @@ async def select_location(message: types.Message):
 @dp.message_handler(lambda message: message.text.startswith("📍"))
 async def select_duration(message: types.Message):
     user_data[message.from_user.id]["location"] = message.text
-    await message.answer("Оберіть термін оренди (в місяцях):", reply_markup=types.ReplyKeyboardRemove())
+    keyboard = types.ReplyKeyboardMarkup(resize_keyboard=True, one_time_keyboard=True)
+    keyboard.add("1 місяць", "3 місяці", "6 місяців", "12 місяців")
+    await message.answer("Оберіть термін оренди (в місяцях):", reply_markup=keyboard)
 
+# Вибір терміну оренди
 @dp.message_handler(lambda message: message.text.isdigit())
 async def get_name(message: types.Message):
     user_data[message.from_user.id]["months"] = int(message.text)
