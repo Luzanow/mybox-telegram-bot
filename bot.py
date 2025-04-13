@@ -49,7 +49,7 @@ async def contact(message: types.Message):
     contact_kb = types.InlineKeyboardMarkup()
     contact_kb.add(types.InlineKeyboardButton("📨 Написати в Telegram", url="https://t.me/Taras031990"))
     await message.answer(
-        "📞 Контактна особа: Тарас\n📱 Телефон: +380 (44) 334 67 37\n🌐 Сайт: https://mybox.kiev.ua",
+        "📞 Контактна особа: Тарас\n📱 Телефон: +380 (95) 938 73 17\n🌐 Сайт: https://mybox.kiev.ua",
         reply_markup=contact_kb
     )
 
