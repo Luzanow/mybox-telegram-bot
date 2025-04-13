@@ -16,6 +16,25 @@ async def send_welcome(message: types.Message):
     keyboard.add("📦 Орендувати контейнер", "📍 Перегляд локацій", "📞 Зв'язатися з нами")
     await message.answer("👍 Вітаємо у MyBox!\nОберіть опцію нижче:", reply_markup=keyboard)
 
+@dp.message_handler(lambda message: message.text == "📞 Зв'язатися з нами")
+async def contact_info(message: types.Message):
+    keyboard = types.InlineKeyboardMarkup()
+    keyboard.add(types.InlineKeyboardButton(text="📲 Написати в Telegram", url="https://t.me/Taras031990"))
+    keyboard.add(types.InlineKeyboardButton(text="📞 Зателефонувати", url="tel:+380959387317"))
+    keyboard.add(types.InlineKeyboardButton(text="✉️ Написати на Email", url="mailto:myboxua55@gmail.com"))
+
+    await message.answer(
+        "📞 Контактна особа: Тарас\n"
+        "📱 Телефон: +38 095 93 87 317\n"
+        "✉️ Email: myboxua55@gmail.com\n"
+        "📍 Адреса: вулиця Дегтярівська, 21, Київ, 02000",
+        reply_markup=keyboard
+    )
+
+    main_menu = types.ReplyKeyboardMarkup(resize_keyboard=True)
+    main_menu.add("📦 Орендувати контейнер", "📍 Перегляд локацій", "📞 Зв'язатися з нами")
+    await message.answer("⬅️ Повернутись до головного меню:", reply_markup=main_menu)
+
 @dp.message_handler(lambda message: message.text == "📍 Перегляд локацій")
 async def view_locations(message: types.Message):
     keyboard = types.InlineKeyboardMarkup(row_width=2)
