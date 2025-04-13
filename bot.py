@@ -10,12 +10,6 @@ dp = Dispatcher(bot)
 
 user_data = {}
 
-@dp.message_handler(commands=['start'])
-async def send_welcome(message: types.Message):
-    keyboard = types.ReplyKeyboardMarkup(resize_keyboard=True)
-    keyboard.add("📦 Орендувати контейнер", "📍 Перегляд локацій", "📞 Зв'язатися з нами")
-    await message.answer("👍 Вітаємо у MyBox!\nОберіть опцію нижче:", reply_markup=keyboard)
-
 @dp.message_handler(lambda message: message.text == "📞 Зв'язатися з нами")
 async def contact_info(message: types.Message):
     keyboard = types.InlineKeyboardMarkup()
@@ -34,6 +28,7 @@ async def contact_info(message: types.Message):
     main_menu = types.ReplyKeyboardMarkup(resize_keyboard=True)
     main_menu.add("📦 Орендувати контейнер", "📍 Перегляд локацій", "📞 Зв'язатися з нами")
     await message.answer("⬅️ Повернутись до головного меню:", reply_markup=main_menu)
+
 
 @dp.message_handler(lambda message: message.text == "📍 Перегляд локацій")
 async def view_locations(message: types.Message):
