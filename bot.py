@@ -1,7 +1,7 @@
 import logging
 from aiogram import Bot, Dispatcher, executor, types
 
-API_TOKEN = "7680848123:AAHqNizmx3hOXmjVOmzdnwQCenlXHTWX8OA"
+API_TOKEN = "7680848123:AAGeVHb8glcUbbb-9IEcdGAauNcG2p2Oeag"
 ADMIN_CHAT_ID = '5498505652'
 
 logging.basicConfig(level=logging.INFO)
