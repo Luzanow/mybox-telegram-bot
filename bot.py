@@ -22,27 +22,27 @@ async def send_welcome(message: types.Message):
 
 # Перегляд локацій
 @dp.message_handler(lambda m: m.text == "📍 Перегляд локацій")
-async def view_locations(message: types.Message):
-    keyboard = types.InlineKeyboardMarkup(row_width=2)
+async def show_locations(message: types.Message):
+    keyboard = InlineKeyboardMarkup(row_width=1)
     locations = [
-        ("📍 Лугова 9", "https://maps.google.com/?q=50.425689,30.483118"),
-        ("📍 Плодова 1", "https://maps.google.com/?q=50.400233,30.457452"),
-        ("📍 Дегтярівська 21", "https://maps.google.com/?q=50.457832,30.480274"),
-        ("📍 Сім'ї Сосніних 3", "https://maps.google.com/?q=50.434291,30.464987"),
-        ("📍 Лобановського 119", "https://maps.google.com/?q=50.426594,30.495850"),
-        ("📍 Сортувальна 5", "https://maps.google.com/?q=50.464835,30.490526"),
-        ("📍 Пухівська 4А", "https://maps.google.com/?q=50.422968,30.510332"),
-        ("📍 Новокостянтинівська 18", "https://maps.google.com/?q=50.438151,30.497368"),
-        ("📍 Бальзака 85А", "https://maps.google.com/?q=50.395106,30.455319"),
-        ("📍 Будіндустрії 5", "https://maps.google.com/?q=50.476872,30.464531"),
-        ("📍 Бориспільська 9", "https://maps.google.com/?q=50.446179,30.476200"),
-        ("📍 Віскозна 1", "https://maps.google.com/?q=50.453824,30.487111"),
-        ("📍 Промислова 4", "https://maps.google.com/?q=50.425598,30.508532")
+        ("Новокостянтинівська, 22/15", "https://maps.app.goo.gl/RpDz2E671UVgkQg57"),
+        ("Відрадний проспект, 107", "https://maps.app.goo.gl/gjmy3mC4TmWH27r87"),
+        ("Кирилівська, 41", "https://maps.app.goo.gl/5QYTYfAWqQ7W8pcm7"),
+        ("Дегтярівська, 21", "https://maps.app.goo.gl/2zrWpCkeF3r5TMh39"),
+        ("Садова, 16", "https://maps.app.goo.gl/sCb6wYY3YQtVwVao7"),
+        ("Безняковская, 21", "https://maps.app.goo.gl/9K2ED7EGih4t1dvb7"),  # Додай посилання
+        ("Миколи Василенка, 2", "https://maps.app.goo.gl/Cp6tUB7DGbLz3bdFA"),
+        ("Вінстона Черчилля, 42", "https://maps.app.goo.gl/FNuaeyQHFxaxgCai9"),
+        ("Лугова, 9", "https://maps.app.goo.gl/aCrfjN9vbBjhM17YA"),
+        ("Євгенія Харченка, 35", "https://maps.app.goo.gl/MpGAvtA6awMYKn7s6"),
+        ("Володимира Брожка, 38/58", "https://maps.app.goo.gl/vZAjD6eo84t8qyUk6"),
+        ("Межигірська, 78", "https://maps.app.goo.gl/hdUn8ciM5QLwbLTs6")
     ]
-    for loc, link in locations:
-        keyboard.add(types.InlineKeyboardButton(text=loc, url=link))
-    await message.answer("Оберіть локацію для перегляду на мапі:", reply_markup=keyboard)
-
+    
+    for name, url in locations:
+        keyboard.add(InlineKeyboardButton(text=name, url=url))
+    
+    await message.answer("📍 Оберіть локацію зі списку:", reply_markup=keyboard)
 # Зв’язок
 @dp.message_handler(lambda m: m.text == "📞 Зв'язатися з нами")
 async def contact(message: types.Message):
