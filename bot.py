@@ -54,11 +54,23 @@ async def contact(message: types.Message):
     )
 
 # Оренда
-@dp.message_handler(lambda m: m.text == "📦 Орендувати контейнер")
-async def rent_start(message: types.Message):
-    keyboard = types.ReplyKeyboardMarkup(resize_keyboard=True, one_time_keyboard=True)
-    keyboard.add("5 футів - 1850 грн", "7.5 футів - 2350 грн")
-    keyboard.add("15 футів - 3800 грн", "30 футів - 6650 грн")
+@dp.message_handler(commands=['rent'])
+async def handle_rent(message: types.Message):
+    notice_text, rent_keyboard = get_rent_keyboard()
+    await message.answer(notice_text + "\n\nОберіть бажаний період оренди:", reply_markup=rent_keyboard, parse_mode='HTML')
+def get_rent_keyboard():
+    # Текст з попередженням про знижку
+    discount_notice = "🧾 <b><span style='color:red'>Знижка діє лише при повній оплаті за вибраний період</span></b> 💰💸💵"
+
+    # Кнопки оренди
+    rent_keyboard = InlineKeyboardMarkup(row_width=1)
+    rent_keyboard.add(
+        InlineKeyboardButton("📅 1–3 місяці", callback_data="rent_1_3"),
+        InlineKeyboardButton("📅 3–6 місяців (-5%)", callback_data="rent_3_6"),
+        InlineKeyboardButton("📅 6–12 місяців (-10%)", callback_data="rent_6_12")
+    )
+
+    return discount_notice, rent_keyboard
     await message.answer("Оберіть розмір контейнера з ціною:", reply_markup=keyboard)
 
 @dp.message_handler(lambda m: "футів" in m.text)
